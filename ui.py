@@ -15,8 +15,10 @@ class ui:
         # value to read input into 
         val = ''
 
+        print('automine: ' + str(self.miner.auto) + '\nWould you like to:\nhault/resume autogeneration (a)\ngenerate a new block (n)\nprint the whole blockchain (p)\nprint all clients\' balances (b)\nor quit (q)\n')
+
         while val != 'q' and val != 'quit' and val != 'exit' and self.miner.mine:
-            val = input('automine: ' + str(self.miner.auto) + '\nWould you like to:\nhault/resume autogeneration (a)\ngenerate a new block (n)\nprint the whole blockchain (p)\nprint all clients\' balances (b)\nor quit (q)\n(a,n,p,b,q) > ').lower()
+            val = input('(a,n,p,b,q) > ').lower()
 
             # adding an event
             if val == 'gen' or val == 'n' or val == 'g' or val == 'generate' or val == 'new':
@@ -32,6 +34,8 @@ class ui:
                 else:
                     self.miner.auto = True
                     print('automine: True')
+            elif val == 'c':
+                os.system('clear')
                     
 
         self.miner.mine = False

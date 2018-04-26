@@ -22,11 +22,13 @@ class miner():
 
     def generateBlock(self, valid=True):
         block = generateBlock(self.chain, valid=valid)
-        if block:
+        print('new block:')
+        printBlock(block)
+        if block and (checkValid(self.chain, block) or not valid):
             os.system('clear')
             self.addToChain(block)
-            print('new block:')
-            printBlock(block)
+        else:
+            self.auto = False
 
     def printChain(self):
         printChain(self.chain)
