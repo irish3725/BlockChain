@@ -1,5 +1,14 @@
-
+import hashlib
+import json
 import random
+import time
+
+def genesis():
+    gen_block = [['gen', 100, 0], ['gen', 100, 1], ['gen', 100, 2], ['gen', 100, 3], ['gen', 100, 4]]
+    prev_hash = hashlib.sha256(str(time.time()).encode()).hexdigest()
+    gen_block.append(prev_hash)
+    gen_block = getNonce(gen_block)
+    return gen_block
 
 ## generates random block
 def generateBlock(chain, valid=True):
@@ -33,8 +42,35 @@ def generateBlock(chain, valid=True):
                 balance[c1] = balance[c1] - amount
                 balance[c2] = balance[c2] + amount
 
+    
+    prev_block = chain[len(chain) - 1]
+    prev_hash = hashlib.sha256(blockToString(prev_block).encode()).hexdigest()
+    block.append(prev_hash)
+    block = getNonce(block)
     # return new block
     return block
+
+def getNonce(block):
+    # difficulty of this block
+    diff = 4
+    # create initial nonce
+    nonce = '0000000000000000000000000000000000000000000000000000000000000000'
+    # append new nonce
+    block.append(nonce)
+    # iterate til we get a correct nonce
+    while True:
+        
+        # generate random nonce
+        nonce = hashlib.sha256(str(time.time()).encode()).hexdigest()
+        # make the last entry in block new nonce
+        block[len(block)-1] = nonce
+        this_hash = hashlib.sha256(blockToString(block).encode()).hexdigest()
+        if this_hash[:diff] == '0000000000000000000000000000000000000000000000000000000000000000'[:diff]:
+            print('new nonce:', nonce)
+            return block 
+
+def blockToString(block):
+    return json.dumps(block)
 
 ## checks to see if block is valid within chain
 def checkValid(chain, block):
@@ -64,8 +100,10 @@ def checkValid(chain, block):
             
 ## method to print all balances
 def printAllBalances(chain):
+    print('\n__________Balances__________')
     for i in range(5):
-        print('client', i, getBalance(chain, i))
+        print('\tclient', str(i) + ':', getBalance(chain, i))
+    print()
 
 ## method to return balance of client
 ## according to history in chain
@@ -96,14 +134,20 @@ def getTotal(chain):
         
 ## prints single block in chain
 def printBlock(block):
+    i = 0
     print('---------------------------------')
-    for transaction in block:
-        print('client', transaction[0], 'sends $' + str(transaction[1]), 'to client', transaction[2])
+    for line in block:
+        if len(line) == 3:
+            print('transaction', str(i) + ': \t client', line[0], 'sends $' + str(line[1]), 'to client', line[2])
+            i = i + 1
+    print('previous hash:\t', block[len(block) - 2])
+    print('nonce:\t\t', block[len(block) - 1])
     print('---------------------------------')
 
 ## prints entire chain
 def printChain(chain):
     for block in chain:
         printBlock(block)
+            
 #        printAllBalances(chain)
 
