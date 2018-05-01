@@ -5,17 +5,22 @@ import threading
 import time
 
 from utils import *
+#from Raft import Server
 import ui
 
 class miner():
-    def __init__(self):
+    def __init__(self, m_id='0'):
         # genesis block gives 100 to all clients
         self.chain = []
-        self.chain.append(genesis())
+        self.leader = False
         # variable to decide to continue mining
         self.mine = True
         # variable to decide to generate blocks automatically
         self.auto = True
+        # chance of generating a block
+        self.p = 2
+        # miner id
+        self.id = m_id
 
     def addToChain(self, block):
         self.chain.append(block)
@@ -29,7 +34,7 @@ class miner():
             balance.append(getBalance(chain,i))
 
         # generate a random number of transactions
-        num_trans = int(random.uniform(1,5))
+        num_trans = int(random.uniform(1,6))
 
         # create empty block
         block = []
@@ -59,9 +64,16 @@ class miner():
         # append hash to block
         block.append(prev_hash)
         # get a valid nonce for block
-        block = self.getNonce(block)
+        block = self.sign(block)
         # return new block
         return block
+
+    ## signs block and returns finished block
+    def sign(self, block):
+        block.append(self.id)
+        print('sign not yet implemented')
+        return block
+        
 
     ## generates random sha256 hashes for nonce till
     ## hash of block has diff number of leading 0s
@@ -102,17 +114,31 @@ class miner():
         printAllBalances(self.chain)
 
     def run(self):
-        self.generateBlock()
+        wait = 2
+        next_gen = time.time() + wait
         while self.mine:
-            if self.auto:
-                self.generateBlock()
+            if next_gen < time.time():
+                next_gen = time.time() + wait
+                roll = int(random.uniform(0,self.p))
+                if self.auto:
+                    if roll == 0:
+                        self.generateBlock()
+                    else:
+                        print('rolled:', roll)
 
 if __name__ == '__main__':
+    # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
+    # create list of threads
+    threads = []
+
+#    if len(sys.argv) > 1:
+#        raft = Server(sys.argv[1])
+#        threads.append(threading.Thread(name='raft', target=raft.run))
+
     miner = miner()
     ui = ui.ui(miner)
 
-    threads = []
 
     threads.append(threading.Thread(name='run', target=miner.run))
     threads.append(threading.Thread(name='ui', target=ui.run))
