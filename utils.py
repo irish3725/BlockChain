@@ -43,7 +43,8 @@ def generateBlock(chain, valid=True):
             # append new block
             block.append([c1, amount, c2])
             # if we want a valid block, keep track of balances
-            if valid: balance[c1] = balance[c1] - amount
+            if valid:
+                balance[c1] = balance[c1] - amount
                 balance[c2] = balance[c2] + amount
 
     # ger previous block and hash
@@ -60,7 +61,7 @@ def generateBlock(chain, valid=True):
 ## hash of block has diff number of leading 0s
 def getNonce(block):
     # difficulty of this block
-    diff = 5
+    diff = 4
     # create initial nonce
     nonce = '0000000000000000000000000000000000000000000000000000000000000000'
     # append new nonce

@@ -53,7 +53,7 @@ class miner():
                     balance[c1] = balance[c1] - amount
                     balance[c2] = balance[c2] + amount
 
-        # ger previous block and hash
+        # get previous block and hash
         prev_block = chain[len(chain) - 1]
         prev_hash = hashlib.sha256(blockToString(prev_block).encode()).hexdigest()
         # append hash to block
@@ -67,7 +67,7 @@ class miner():
     ## hash of block has diff number of leading 0s
     def getNonce(self, block):
         # difficulty of this block
-        diff = 4
+        diff = 5
         # create initial nonce
         nonce = '0000000000000000000000000000000000000000000000000000000000000000'
         # append new nonce

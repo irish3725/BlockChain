@@ -11,7 +11,7 @@ import ui
 class miner():
     def __init__(self, m_id='0'):
         # genesis block gives 100 to all clients
-        self.chain = []
+        self.chain = [genesis()]
         self.leader = False
         # variable to decide to continue mining
         self.mine = True
@@ -71,7 +71,6 @@ class miner():
     ## signs block and returns finished block
     def sign(self, block):
         block.append(self.id)
-        print('sign not yet implemented')
         return block
         
 
@@ -123,8 +122,6 @@ class miner():
                 if self.auto:
                     if roll == 0:
                         self.generateBlock()
-                    else:
-                        print('rolled:', roll)
 
 if __name__ == '__main__':
     # clear terminal
